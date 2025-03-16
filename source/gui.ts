@@ -154,6 +154,7 @@ export function gui_render_table(rows: any, header: any): HTMLTableElement {
 }
 
 export class component_t {
+    parent: component_t|null;
     children: component_t[] = [];
     ref_el: HTMLElement;
 
@@ -558,7 +559,7 @@ export class color_edit_t extends component_t {
             range_container_el.append(range_el);
 
             range_el.onchange = (function(this: color_edit_t): void {
-                this.value[3] = parseFloat(range_el.value);
+                this.value[3] = parseFloat(range_el.value) * (this.mode === COLOR_MODE.R_0_255 ? 255.0 : 1.0);
                 range_container_el.dataset.content = range_el.value;
                 this.onchange(this.value);
             }).bind(this);
@@ -923,6 +924,7 @@ export function gui_window(parent: window_t|null, title: string = ""): window_t 
     component.layout = [];
     component.window_parent = parent;
     component.window_children = [];
+    component.parent = parent;
 
     if (parent) {
         parent.children.push(component);
@@ -953,6 +955,7 @@ export function gui_collapsing_header(parent: component_t, title: string, is_col
     const component = new collapsing_header_t();
     component.title = title;
     component.is_collapsed = is_collapsed;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -962,6 +965,7 @@ export function gui_collapsing_header(parent: component_t, title: string, is_col
 export function gui_group(parent: component_t, condition: () => boolean = () => true): group_t {
     const component = new group_t();
     component.condition = condition;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -971,6 +975,7 @@ export function gui_group(parent: component_t, condition: () => boolean = () => 
 export function gui_text(parent: component_t, value: string): text_t {
     const component = new text_t();
     component.value = value;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -982,6 +987,7 @@ export function gui_bool(parent: component_t, label: string, value: getset_t, on
     component.label = label;
     component.value = value;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -996,6 +1002,7 @@ export function gui_input_number(parent: component_t, label: string, value: gets
     component.min = min;
     component.max = max;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1010,6 +1017,7 @@ export function gui_slider_number(parent: component_t, label: string, value: get
     component.min = min;
     component.max = max;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1025,6 +1033,7 @@ export function gui_input_vec(parent: component_t, label: string, value: vec_t, 
     component.max = max;
     component.size = size;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1037,6 +1046,7 @@ export function gui_color_edit(parent: component_t, label: string, mode: COLOR_M
     component.value = value;
     component.mode = mode;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1048,6 +1058,7 @@ export function gui_input_text(parent: component_t, label: string, value: getset
     component.label = label;
     component.value = value;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1061,6 +1072,7 @@ export function gui_radio_group(parent: component_t, label: string, value: getse
     component.keys = keys;
     component.values = values;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1074,6 +1086,7 @@ export function gui_checkbox_group(parent: component_t, label: string, value: ge
     component.keys = keys;
     component.values = values;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1087,6 +1100,7 @@ export function gui_select(parent: component_t, label: string, value: getset_t, 
     component.keys = keys;
     component.values = values;
     component.onchange = onchange;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1097,6 +1111,7 @@ export function gui_button(parent: component_t, label: string, onclick: () => an
     const component = new button_t();
     component.label = label;
     component.onclick = onclick;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1106,6 +1121,7 @@ export function gui_button(parent: component_t, label: string, onclick: () => an
 export function gui_canvas(parent: component_t, auto_resize: boolean = true): canvas_t {
     const component = new canvas_t();
     component.auto_resize = auto_resize;
+    component.parent = parent;
 
     parent.children.push(component);
 
@@ -1115,6 +1131,24 @@ export function gui_canvas(parent: component_t, auto_resize: boolean = true): ca
 export function gui_render_component(component: component_t, parent_el: HTMLElement): void {
     component.render();
     parent_el.append(component.ref_el);
+    component.mount();
+
+    for (const child of component.children) {
+        gui_render_component(child, component.container());
+    }
+}
+
+export function gui_reload_component(component: component_t): void {
+    const parent_el = component.parent?.ref_el;
+
+    if (!parent_el) {
+        return;
+    }
+
+    const prev_el = component.ref_el;
+
+    component.render();
+    prev_el.replaceWith(component.ref_el);
     component.mount();
 
     for (const child of component.children) {
