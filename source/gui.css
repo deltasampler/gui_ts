@@ -126,6 +126,11 @@
     color: var(--gui_text_color);
 }
 
+.gui_text pre {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
 /* label */
 .gui_label {
     font-family: var(--gui_font_family);
