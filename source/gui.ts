@@ -874,7 +874,7 @@ export class canvas_t extends component_t {
         const ref_el = document.createElement("div");
         ref_el.className = "gui_canvas";
 
-        const canvas_el = document.createElement("canvas");
+        const canvas_el = this.canvas_el ?? document.createElement("canvas");
         ref_el.append(canvas_el);
 
         if (this.auto_resize) {
