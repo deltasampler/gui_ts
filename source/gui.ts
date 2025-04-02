@@ -92,6 +92,18 @@ export function gs_call(call_get: () => any, call_set: (value: any) => void): ge
     return getset;
 }
 
+export function get_enum_keys(en: {}): string[] {
+    const keys = Object.values(en);
+
+    return keys.slice(0, keys.length / 2).map(v => String(v));
+}
+
+export function get_enum_values(en: {}): number[] {
+    const values = Object.keys(en);
+
+    return values.slice(0, values.length / 2).map(v => Number(v));
+}
+
 export function gui_render_label(label: string, parent_el: HTMLElement): HTMLSpanElement|null {
     if (!label) {
         return null;
