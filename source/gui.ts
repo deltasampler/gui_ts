@@ -1,5 +1,11 @@
 import "./gui.css";
 
+// clamp
+export function clamp(x: number, min: number, max: number): number {
+    return Math.min(Math.max(x, min), max);
+}
+
+// vector type
 export type typed_array_t =
     | Int8Array
     | Uint8Array
@@ -11,10 +17,7 @@ export type typed_array_t =
 
 export type vec_t = number[] | typed_array_t;
 
-export function clamp(x: number, min: number, max: number): number {
-    return Math.min(Math.max(x, min), max);
-}
-
+// unit
 export enum UT {
     PX,
     PCT,
@@ -45,6 +48,7 @@ export function unit_str(unit: unit_t): string {
     return `${unit.x}${UNIT_STR[unit.u]}`;
 }
 
+// getset
 export enum GETSET_TYPE {
     OBJECT,
     CALL
@@ -92,6 +96,7 @@ export function gs_call(call_get: () => any, call_set: (value: any) => void): ge
     return getset;
 }
 
+// enum conversion
 export function get_enum_keys(en: {}): string[] {
     const keys = Object.values(en);
 
@@ -104,6 +109,7 @@ export function get_enum_values(en: {}): number[] {
     return values.slice(0, values.length / 2).map(v => Number(v));
 }
 
+// element rendering
 export function gui_render_label(label: string, parent_el: HTMLElement): HTMLSpanElement|null {
     if (!label) {
         return null;
@@ -165,6 +171,7 @@ export function gui_render_table(rows: any, header: any): HTMLTableElement {
     return table_el;
 }
 
+// components
 export class component_t {
     parent: component_t|null;
     children: component_t[] = [];
@@ -925,6 +932,7 @@ export const COMPONENT_TYPES = [
     canvas_t
 ];
 
+// component api
 let id = 0;
 
 export function gui_window(parent: window_t|null, title: string = ""): window_t {
@@ -963,50 +971,58 @@ export function gui_window_layout(window: window_t, window_children: window_t[])
     window.layout = layout;
 }
 
-export function gui_collapsing_header(parent: component_t, title: string, is_collapsed: boolean = false): collapsing_header_t {
+export function gui_collapsing_header(parent: component_t|null, title: string, is_collapsed: boolean = false): collapsing_header_t {
     const component = new collapsing_header_t();
     component.title = title;
     component.is_collapsed = is_collapsed;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_group(parent: component_t, condition: () => boolean = () => true): group_t {
+export function gui_group(parent: component_t|null, condition: () => boolean = () => true): group_t {
     const component = new group_t();
     component.condition = condition;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_text(parent: component_t, value: string): text_t {
+export function gui_text(parent: component_t|null, value: string): text_t {
     const component = new text_t();
     component.value = value;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_bool(parent: component_t, label: string, value: getset_t, onchange: (value: boolean) => void = () => {}): bool_t {
+export function gui_bool(parent: component_t|null, label: string, value: getset_t, onchange: (value: boolean) => void = () => {}): bool_t {
     const component = new bool_t();
     component.label = label;
     component.value = value;
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_input_number(parent: component_t, label: string, value: getset_t, step: number, min: number, max: number, onchange: (value: number) => void = () => {}): input_number_t {
+export function gui_input_number(parent: component_t|null, label: string, value: getset_t, step: number, min: number, max: number, onchange: (value: number) => void = () => {}): input_number_t {
     const component = new input_number_t();
     component.label = label;
     component.value = value;
@@ -1016,12 +1032,14 @@ export function gui_input_number(parent: component_t, label: string, value: gets
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_slider_number(parent: component_t, label: string, value: getset_t, step: number, min: number, max: number, onchange: (value: number) => void = () => {}): slider_number_t {
+export function gui_slider_number(parent: component_t|null, label: string, value: getset_t, step: number, min: number, max: number, onchange: (value: number) => void = () => {}): slider_number_t {
     const component = new slider_number_t();
     component.label = label;
     component.value = value;
@@ -1031,12 +1049,14 @@ export function gui_slider_number(parent: component_t, label: string, value: get
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_input_vec(parent: component_t, label: string, value: vec_t, step: number, min: number, max: number, size: number, onchange: (value: vec_t) => void = () => {}): input_vec_t {
+export function gui_input_vec(parent: component_t|null, label: string, value: vec_t, step: number, min: number, max: number, size: number, onchange: (value: vec_t) => void = () => {}): input_vec_t {
     const component = new input_vec_t();
     component.label = label;
     component.value = value;
@@ -1047,12 +1067,14 @@ export function gui_input_vec(parent: component_t, label: string, value: vec_t, 
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_color_edit(parent: component_t, label: string, mode: COLOR_MODE, value: vec_t, onchange: (value: vec_t) => void = () => {}): color_edit_t {
+export function gui_color_edit(parent: component_t|null, label: string, mode: COLOR_MODE, value: vec_t, onchange: (value: vec_t) => void = () => {}): color_edit_t {
     const component = new color_edit_t();
     component.label = label;
     component.value = value;
@@ -1060,24 +1082,28 @@ export function gui_color_edit(parent: component_t, label: string, mode: COLOR_M
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_input_text(parent: component_t, label: string, value: getset_t, onchange: (value: string) => void = () => {}): input_text_t {
+export function gui_input_text(parent: component_t|null, label: string, value: getset_t, onchange: (value: string) => void = () => {}): input_text_t {
     const component = new input_text_t();
     component.label = label;
     component.value = value;
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_radio_group(parent: component_t, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): radio_group_t {
+export function gui_radio_group(parent: component_t|null, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): radio_group_t {
     const component = new radio_group_t();
     component.label = label;
     component.value = value;
@@ -1086,12 +1112,14 @@ export function gui_radio_group(parent: component_t, label: string, value: getse
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_checkbox_group(parent: component_t, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): checkbox_group_t {
+export function gui_checkbox_group(parent: component_t|null, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): checkbox_group_t {
     const component = new checkbox_group_t();
     component.label = label;
     component.value = value;
@@ -1100,12 +1128,14 @@ export function gui_checkbox_group(parent: component_t, label: string, value: ge
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_select(parent: component_t, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): select_t {
+export function gui_select(parent: component_t|null, label: string, value: getset_t, keys: string[], values: any[], onchange: (value: any) => void = () => {}): select_t {
     const component = new select_t();
     component.label = label;
     component.value = value;
@@ -1114,30 +1144,45 @@ export function gui_select(parent: component_t, label: string, value: getset_t, 
     component.onchange = onchange;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_button(parent: component_t, label: string, onclick: () => any): button_t {
+export function gui_button(parent: component_t|null, label: string, onclick: () => any): button_t {
     const component = new button_t();
     component.label = label;
     component.onclick = onclick;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
 }
 
-export function gui_canvas(parent: component_t, auto_resize: boolean = true): canvas_t {
+export function gui_canvas(parent: component_t|null, auto_resize: boolean = true): canvas_t {
     const component = new canvas_t();
     component.auto_resize = auto_resize;
     component.parent = parent;
 
-    parent.children.push(component);
+    if (parent) {
+        parent.children.push(component);
+    }
 
     return component;
+}
+
+// component rendering
+export function gui_component_append(parent: component_t, child: component_t): void {
+    child.parent = parent;
+
+    if (parent.children.indexOf(child) < 0) {
+        parent.children.push(child);
+    }
 }
 
 export function gui_render_component(component: component_t, parent_el: HTMLElement): void {
