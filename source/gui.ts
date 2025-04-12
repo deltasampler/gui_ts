@@ -480,7 +480,7 @@ export class input_vec_t extends component_t {
         const container_el = gui_render_container();
         ref_el.append(container_el);
 
-        const input_els = [];
+        const input_els: HTMLInputElement[] = [];
 
         for (let i = 0; i < this.value.length; i += 1) {
             const input_el = gui_render_input("number", this.value[i], this.step, this.min, this.max);
@@ -658,7 +658,7 @@ export class radio_group_t extends component_t {
         const container_el = gui_render_container();
         ref_el.append(container_el);
 
-        const option_els = [];
+        const option_els: HTMLDivElement[] = [];
         const current_value = this.value.get();
 
         for (let i = 0; i < this.keys.length; i += 1) {
@@ -720,7 +720,7 @@ export class checkbox_group_t extends component_t {
         const container_el = gui_render_container();
         ref_el.append(container_el);
 
-        const option_els = [];
+        const option_els: HTMLDivElement[] = [];
         const current_value = this.value.get();
 
         for (let i = 0; i < this.keys.length; i += 1) {
@@ -806,7 +806,7 @@ export class select_t extends component_t {
         container_el.className = "gui_select_container";
         select_el.append(container_el);
 
-        const option_els = [];
+        const option_els: HTMLDivElement[] = [];
         const current_value = this.value.get();
 
         for (let i = 0; i < this.keys.length; i += 1) {
@@ -962,7 +962,7 @@ export function gui_window_grid(window: window_t, grid_x: unit_t[], grid_y: unit
 }
 
 export function gui_window_layout(window: window_t, window_children: window_t[]): void {
-    const layout = [];
+    const layout: number[] = [];
 
     for (const child of window_children) {
         layout.push(child.id);
