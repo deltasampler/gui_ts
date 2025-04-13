@@ -285,6 +285,7 @@
 .gui_radio_group > .gui_container {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .gui_radio_group_option {
@@ -337,6 +338,7 @@
 .gui_checkbox_group > .gui_container {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .gui_checkbox_group_option {
